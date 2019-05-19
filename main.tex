@@ -1,0 +1,193 @@
+\documentclass[10pt]{beamer}
+
+\usetheme[progressbar=frametitle]{metropolis}
+\usepackage{appendixnumberbeamer}
+\usepackage[english,spanish]{babel}
+% \usepackage[utf8]{inputenc} % Required for inputting international characters
+% \usepackage[T1]{fontenc} % Output font encoding for international characters
+
+\usepackage{booktabs}
+\usepackage{bm}
+\usefonttheme{professionalfonts}
+\usepackage{mathspec}
+\usepackage{todonotes}
+\usepackage[scale=2]{ccicons}
+
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+
+\usepackage{xspace}
+\newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
+
+\title{Advanced Natural Language Processing Techniques to Profile Cybercriminals}
+\subtitle{\textsc{Proyecto de grado}}
+\date{\today}
+% \date{}
+\author{\textsc{\scriptsize \textbf{Autor}} Alejandro \textsc{Anzola \'Avila}\\
+  \textsc{\scriptsize \textbf{Director}} Daniel Orlando \textsc{D\'{\i}az L\'opez}, \textit{PhD}}
+\institute{Escuela Colombiana de Ingenier\'{\i}a Julio Garavito}
+\titlegraphic{\hfill\includegraphics[height=1.5cm]{Images/escuela-logo.png}}
+
+% 1.Nombre del proyecto
+% 1.Integrantes
+% 1.Director
+% 2.Agenda
+% 3.Objetivo general y específicos (para todo el proyecto: PGR1 y PGR2)
+% 4.Justificación del proyecto
+% 5.Resultados propuestos
+% 5.Productos obtenidos a la fecha (explicación técnica de los resultados) (Seccion 3)
+% 6.Marco teorico (x3)
+% 7.Problemas y soluciones
+% 7.Modelo 1 (x3)
+% 7.Modelo 2 (x3)
+% 8.Trabajo futuro y conclusiones
+
+\begin{document}
+
+\input{math_commands.tex} % para definir una notacion
+
+\maketitle
+
+\begin{frame}{Agenda}
+  \setbeamertemplate{section in toc}[sections numbered]
+  % \tableofcontents[hideallsubsections]
+  \tableofcontents
+\end{frame}
+
+\section{Objetivos y justificación}
+
+\begin{frame}[allowframebreaks]{Objetivo general y objetivos específicos}
+
+  \begin{alertblock}{Objetivo general}
+    Generar herramientas y estrategias para el perfilado de cibercriminales con ayuda de metodologías de \emph{NLP} aplicado a datos recolectados de comunicaciones y redes sociales.
+  \end{alertblock}
+
+  \begin{alertblock}{Objetivos específicos}
+    \begin{itemize}
+      \item Diseñar e implementar una solución de lenguaje natural para realizar el perfilado de sospechosos.
+
+      \item Identificar el estado del arte en sistemas que usan \emph{NLP} para apoyar agencias de seguridad del Estado.
+
+      \item Implementación de artefactos para la construcción de \emph{datasets} con información recolectada de medios privados como de fuentes abiertas.
+
+      \item Validar la solución desarrollada frente a un escenario real.
+
+      \item Modelado de diferentes metodologías, heurísticas y meta--heurísticas para \emph{NLP}.
+    \end{itemize}
+  \end{alertblock}
+  
+\end{frame}
+
+\begin{frame}{Justificación}
+  \todo[inline]{Por hacer}
+\end{frame}
+
+\section{Resultados propuestos y productos obtenidos}
+
+\begin{frame}{Resultados propuestos}
+  \todo[inline]{Por hacer}
+\end{frame}
+
+\begin{frame}{Productos obtenidos}
+  \todo[inline]{Por hacer}
+\end{frame}
+
+\section{Marco teórico}
+
+\subsection{Clasificador \textsc{Na\"ive Bayes}}
+\begin{frame}{Teorema de Bayes}
+  % \todo[inline]{Por hacer}
+  Para variables aleatorias $\rx$ e $\ry$, se tiene que la probabilidad condicional $P(\ry \mid \rx)$ es definida como
+  \begin{equation*}
+    P(\ry \mid \rx) = \frac{P(\rx \mid \ry) P(\ry)}{P(\rx)}
+  \end{equation*}
+\end{frame}
+
+\begin{frame}{Clasificador \textsc{Na\"ive Bayes}}
+  Un clasificador de Na\"{\i}ve Bayes estima la probabilidad condicional de las clases por medio de suponer que los atributos son condicionalmente independientes, dado la etiqueta de clasificación $y$. Donde cada conjunto de $d$ atributos $\sX=\{ x_1, \ldots, x_d \}$ se tiene
+  \begin{equation*}
+    P(\sX\mid\ry=y) = \prod_{i=1}^{d} P(x_i\mid\ry=y)
+  \end{equation*}
+
+  El clasificador computa la probabilidad posterior para cada clase $\ry$ como
+  \begin{equation*}
+    P(\ry\mid \sX) = \frac{P(\ry) \prod_{i=1}^{d}P(x_i\mid\ry)}{P(\sX)} \Rightarrow P(\ry) \prod_{i=1}^{d}P(x_i\mid\ry)
+  \end{equation*}
+  \alert{Nota} Puede ignorarse $P(\sX)$ debido a que es un termino constante. Para esto se realiza una normalización de forma que $\sum_{\forall \ry \in \sY} P(\ry\mid \sX) = 1$.
+\end{frame}
+
+\subsection{Clasificación con \textsc{Support Vector Machines (SVM)}}
+\begin{frame}{Clasificación con \textsc{Support Vector Machines (SVM)}}
+  Técnica de clasificación con una frontera de decisión en forma de hiper-planos que permiten aplicaciones con vectores de alta dimensionalidad. En su forma no--lineal se utiliza una función polinomial de similaridad $K$ para no afectar el rendimiento por la alta dimensionalidad.
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{Images/svm-hyperplanes.pdf}
+    \caption[Maximum Margin Hyperplanes]{Maximum Margin Hyperplanes. Tomado de \cite{tan2005introduction}.}
+    \label{fig:svm-hyperplanes}
+  \end{figure}
+\end{frame}
+
+\subsection{\textsc{Self-organizing Maps (SOM)}}
+\begin{frame}{\textsc{Self-organizing Maps (SOM)}}
+  Es un mapa discreto de $o$ neuronas con vectores $\vw \in \R^m$ que se adaptan a una entrada de $\mX \in \R^{m \times N}$ de $N$ patrones. Tiene una adaptación con una tasa de aprendizaje $\alpha_t$ y un área de afectación $\sigma_t$ que se reducen por cada iteración $t \in \{0, \ldots, T\}$.
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.75\textwidth]{Images/som-adaptive-proc.pdf}
+    \caption[Proceso de adaptación de \textsc{SOM}]{Proceso de adaptación de \textsc{SOM}, (a)~uni--dimensional, (b)~bi--dimensional. Tomado de \cite{de2006fundamentals}.}
+    \label{fig:som-adap-proc}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Ejemplo de \textsc{SOM}}
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.75\textwidth]{Images/som-implementation-example25.pdf}
+    \caption[Ejemplo de salida de \textsc{som} uni-dimensional]{Ejemplo de salida de \textsc{som} uni-dimensional con 25 neuronas. Implementación propia.}
+    \label{fig:som-impl-example}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Aplicación de \textsc{SOM}}
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.75\textwidth]{Images/som-example.png}
+    \caption[Ejemplo de uso de \textsc{SOM} en aplicaciones de perfilado]{Ejemplo de uso de \textsc{SOM} en aplicaciones de perfilado. Tomado de \cite{mena2003investigative}.}
+    \label{fig:som-example}
+  \end{figure}
+\end{frame}
+
+\section{Problemas y soluciones}
+
+\subsection{\textsc{Modelo 1:} Predicción de etiquetas de Twitter}
+
+\begin{frame}{\textsc{Modelo 1:} Predicción de etiquetas de Twitter}
+  \todo[inline]{Por hacer}
+\end{frame}
+
+\subsection{\textsc{Modelo 2:} Reconocimiento de \textsc{Named Entities} con redes \textsc{LSTM}}
+
+\begin{frame}{\textsc{Modelo 2:} Reconocimiento de \textsc{Named Entities} con redes \textsc{LSTM}}
+  \todo[inline]{Por hacer}
+\end{frame}
+
+\section{Conclusiones y trabajo futuro}
+
+\begin{frame}{Conclusiones}
+  \todo[inline]{Por hacer}
+\end{frame}
+
+\begin{frame}{Trabajo futuro}
+  \todo[inline]{Por hacer}
+\end{frame}
+
+\appendix
+\setbeamertemplate{bibliography item}{\insertbiblabel}
+\begin{frame}[allowframebreaks]{Bibliografía}
+
+  % \nocite{*}
+  \bibliography{demo}
+  \bibliographystyle{abbrv}
+
+\end{frame}
+
+\end{document}
