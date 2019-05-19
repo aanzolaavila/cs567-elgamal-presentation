@@ -23,8 +23,6 @@
 \subtitle{\textsc{Proyecto de grado}}
 \date{\today}
 % \date{}
-\author{\textsc{\scriptsize \textbf{Autor}} Alejandro \textsc{Anzola \'Avila}\\
-  \textsc{\scriptsize \textbf{Director}} Daniel Orlando \textsc{D\'{\i}az L\'opez}, \textit{PhD}}
 \institute{Escuela Colombiana de Ingenier\'{\i}a Julio Garavito}
 \titlegraphic{\hfill\includegraphics[height=1.5cm]{Images/escuela-logo.png}}
 
@@ -43,6 +41,14 @@
 % 8.Trabajo futuro y conclusiones
 
 \begin{document}
+
+\author{%
+  \begin{tabular}{rl}
+    \textsc{\scriptsize \textbf{Autor}}    & Alejandro \textsc{Anzola \'Avila} \\
+    \textsc{\scriptsize \textbf{Director}} & Daniel Orlando \textsc{D\'{\i}az L\'opez}, \textit{PhD} \\
+  \end{tabular}
+  \vspace{1em}
+}
 
 \input{math_commands.tex} % para definir una notacion
 
@@ -88,8 +94,38 @@
   \todo[inline]{Por hacer}
 \end{frame}
 
-\begin{frame}{Productos obtenidos}
-  \todo[inline]{Por hacer}
+\begin{frame}[allowframebreaks]{Productos obtenidos}
+  \begin{enumerate}
+  \item Entendimiento de las generalidades de \textsc{Data Science}:
+    \begin{itemize}
+    \item Tipos de \textsc{Machine Learning}
+    \item Sistemas de detección de anomalías
+    \item Diferentes modalidades de clustering
+    \end{itemize}
+  \item Identificacion de modelos de \textsc{NLP} aplicables para el perfilado de cibercriminales
+    
+  \item Entendimiento de los modelos de clasificación y clustering:
+    \begin{itemize}
+    \item Clasificador de Na\"ive Bayes
+    \item Maquinas de soporte vectorial
+    \item Mapas autoorganizados
+    \end{itemize}
+    
+  \item Entendimiento de los modelos utilizados en \textsc{NLP}:
+    \begin{itemize}
+    \item Predicción de etiquetas con modelos de regresión lineal
+    \item Reconocimiento de \textsc{Named Entities}
+    \item Uso de \emph{embeddings} generados con \textsc{StarSpace} para los $k$ textos mas similares
+    \end{itemize}
+    
+  \item Implementación de modelos de \textsc{NLP} para el perfilado de cibercriminales:
+    \begin{itemize}
+    \item Modelo de predicción de hashtags de Twitter con modelos lineales
+    \item Modelo de reconocimiento de \textsc{Named Entities} con redes \textsc{LSTM}
+    \item Modelo de clustering en redes \textsc{SOM} con \emph{embeddings} de \textsc{StarSpace}
+    \end{itemize}
+    
+  \end{enumerate}
 \end{frame}
 
 \section{Marco teórico}
@@ -113,7 +149,7 @@
   \begin{equation*}
     P(\ry\mid \sX) = \frac{P(\ry) \prod_{i=1}^{d}P(x_i\mid\ry)}{P(\sX)} \Rightarrow P(\ry) \prod_{i=1}^{d}P(x_i\mid\ry)
   \end{equation*}
-  \alert{Nota} Puede ignorarse $P(\sX)$ debido a que es un termino constante. Para esto se realiza una normalización de forma que $\sum_{\forall \ry \in \sY} P(\ry\mid \sX) = 1$.
+  \alert{Nota} Puede ignorarse $P(\sX)$ debido a que es un termino constante. Para esto se realiza una normalización con una constante $\epsilon$ de forma que $\sum_{\forall \ry \in \sY} \epsilon^{-1} P(\ry\mid \sX) = 1$.
 \end{frame}
 
 \subsection{Clasificación con \textsc{Support Vector Machines (SVM)}}
