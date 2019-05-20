@@ -3,6 +3,7 @@
 \usetheme[progressbar=frametitle]{metropolis}
 \usepackage{appendixnumberbeamer}
 \usepackage[english,spanish]{babel}
+\usepackage{relsize}
 % \usepackage[utf8]{inputenc} % Required for inputting international characters
 % \usepackage[T1]{fontenc} % Output font encoding for international characters
 
@@ -62,25 +63,22 @@
 
 \section{Objetivos y justificación}
 
-\begin{frame}[allowframebreaks]{Objetivo general y objetivos específicos}
+\begin{frame}{Objetivo general}
+  Generar herramientas y estrategias para el perfilado de cibercriminales con ayuda de metodologías de \emph{NLP} aplicado a datos recolectados de comunicaciones y redes sociales.
+\end{frame}
 
-  \begin{alertblock}{Objetivo general}
-    Generar herramientas y estrategias para el perfilado de cibercriminales con ayuda de metodologías de \emph{NLP} aplicado a datos recolectados de comunicaciones y redes sociales.
-  \end{alertblock}
+\begin{frame}{Objetivos específicos}
+  \begin{itemize}
+  \item Diseñar e implementar una solución de lenguaje natural para realizar el perfilado de sospechosos.
 
-  \begin{alertblock}{Objetivos específicos}
-    \begin{itemize}
-      \item Diseñar e implementar una solución de lenguaje natural para realizar el perfilado de sospechosos.
+  \item Identificar el estado del arte en sistemas que usan \emph{NLP} para apoyar agencias de seguridad del Estado.
+    
+  \item Implementación de artefactos para la construcción de \emph{datasets} con información recolectada de medios privados como de fuentes abiertas.
+    
+  \item Validar la solución desarrollada frente a un escenario real.
 
-      \item Identificar el estado del arte en sistemas que usan \emph{NLP} para apoyar agencias de seguridad del Estado.
-
-      \item Implementación de artefactos para la construcción de \emph{datasets} con información recolectada de medios privados como de fuentes abiertas.
-
-      \item Validar la solución desarrollada frente a un escenario real.
-
-      \item Modelado de diferentes metodologías, heurísticas y meta--heurísticas para \emph{NLP}.
-    \end{itemize}
-  \end{alertblock}
+  \item Modelado de diferentes metodologías, heurísticas y meta--heurísticas para \emph{NLP}.
+  \end{itemize}
   
 \end{frame}
 
@@ -183,7 +181,7 @@
   \end{figure}
 \end{frame}
 
-\begin{frame}{Aplicación de \textsc{SOM}}
+\begin{frame}{Aplicación de \textsc{SOM} en perfilamiento de criminales}
   \begin{figure}
     \centering
     \includegraphics[width=0.75\textwidth]{Images/som-example.png}
@@ -192,9 +190,64 @@
   \end{figure}
 \end{frame}
 
+% ================================================================
+
 \section{Problemas y soluciones}
 
 \subsection{\textsc{Modelo 1:} Predicción de etiquetas de Twitter}
+
+\begin{frame}{Representación de palabras: \textsc{Bag of Words}}
+  $N$ es el tamaño del diccionario de términos $D$ (e.g. $N = |D|$).
+  \begin{equation*} \label{eq:bow-repr1}
+    \text{word2idx} = \Big\{(t_i, i) : \forall i \in \{1, \ldots, N\} \Big\}
+  \end{equation*}
+  
+  \begin{equation*} \label{eq:bow-repr2}
+    \text{idx2word} = \Big[t_1, \ldots, t_N\Big]
+  \end{equation*}
+
+  \begin{alertblock}{Representación de palabras en vectores para \textsc{BoW}}
+    Para un termino individual su vector representativo se define como:
+    \begin{equation*}
+      \ve^{(i)}, (t, i) \in \text{word2idx}
+    \end{equation*}
+    Para un documento $d$ de términos, se calcula por cada termino que existen dentro del diccionario su vector representativo como:
+    \begin{equation*} \label{eq:bow-word-vector-sum}
+      \vs = \mathlarger{\mathlarger{\sum}}_{(t, i) \in \text{word2idx}} \ve^{(i)}, t \in d
+    \end{equation*}
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Representación de palabras: \textsc{TF--IDF}}
+  \textsc{TF--IDF} $=$ Term Frequency -- Inverse Document Frequency
+  \begin{equation*} \label{eq:tf-repr}
+    \text{tf}(t,d) = \text{Frecuencia del termino (o n--grama) } t \text{ en el documento } d
+  \end{equation*}
+
+  \begin{equation*} \label{eq:idf-repr}
+    \text{idf}(t, D) = \text{log}\Bigg( \frac{N}{|\{d \in D : t \in d\}|} \Bigg) ; N = |D|
+  \end{equation*}
+
+  \begin{equation*} \label{eq:tfidf-repr}
+    \text{tf-idf}(t, d, D) = \text{tf}(t, d) \cdot \text{idf}(t, D)
+  \end{equation*}
+\end{frame}
+
+\begin{frame}{Regresión logística $\sigma(x)$ y One vs Rest}
+  \begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+      \begin{axis}[ 
+        xlabel=$x$,
+        ylabel={$\sigmoid(x)$}
+        ] 
+        \addplot {1 / (1+exp(-x))}; 
+      \end{axis}
+    \end{tikzpicture}
+    \caption[Gráfica de función sigmoide]{Gráfica de función sigmoide.}
+    \label{fig:logits-example}
+  \end{figure}
+\end{frame}
 
 \begin{frame}{\textsc{Modelo 1:} Predicción de etiquetas de Twitter}
   \todo[inline]{Por hacer}
