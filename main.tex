@@ -83,7 +83,9 @@
 \end{frame}
 
 \begin{frame}{Justificación}
-  \todo[inline]{Por hacer}
+  En EE.UU. antes del 11 de septiembre, las agencias de seguridad ponían mas énfasis en \textbf{reaccionar} ante los eventos en vez de \textbf{prevenirlos} \cite{mena2003investigative}.
+
+  El trabajo del actual proyecto se enfoca en heurísticas y meta-heurísticas para prevenir incidentes al identificar a posibles perpetradores.
 \end{frame}
 
 \section{Resultados propuestos y productos obtenidos}
@@ -172,23 +174,23 @@
   \end{figure}
 \end{frame}
 
-\begin{frame}{Ejemplo de \textsc{SOM}}
-  \begin{figure}
-    \centering
-    \includegraphics[width=0.75\textwidth]{Images/som-implementation-example25.pdf}
-    \caption[Ejemplo de salida de \textsc{som} uni-dimensional]{Ejemplo de salida de \textsc{som} uni-dimensional con 25 neuronas. Implementación propia.}
-    \label{fig:som-impl-example}
-  \end{figure}
-\end{frame}
+% \begin{frame}{Ejemplo de \textsc{SOM}}
+%   \begin{figure}
+%     \centering
+%     \includegraphics[width=0.75\textwidth]{Images/som-implementation-example25.pdf}
+%     \caption[Ejemplo de salida de \textsc{som} uni-dimensional]{Ejemplo de salida de \textsc{som} uni-dimensional con 25 neuronas. Implementación propia.}
+%     \label{fig:som-impl-example}
+%   \end{figure}
+% \end{frame}
 
-\begin{frame}{Aplicación de \textsc{SOM} en perfilamiento de criminales}
-  \begin{figure}
-    \centering
-    \includegraphics[width=0.75\textwidth]{Images/som-example.png}
-    \caption[Ejemplo de uso de \textsc{SOM} en aplicaciones de perfilado]{Ejemplo de uso de \textsc{SOM} en aplicaciones de perfilado. Tomado de \cite{mena2003investigative}.}
-    \label{fig:som-example}
-  \end{figure}
-\end{frame}
+% \begin{frame}{Aplicación de \textsc{SOM} en perfilamiento de criminales}
+%   \begin{figure}
+%     \centering
+%     \includegraphics[width=0.75\textwidth]{Images/som-example.png}
+%     \caption[Ejemplo de uso de \textsc{SOM} en aplicaciones de perfilado]{Ejemplo de uso de \textsc{SOM} en aplicaciones de perfilado. Tomado de \cite{mena2003investigative}.}
+%     \label{fig:som-example}
+%   \end{figure}
+% \end{frame}
 
 % ================================================================
 
@@ -418,11 +420,11 @@
 \end{frame}
 
 
-\begin{frame}{Entrenamiento y uso de redes \textsc{Bi-LSTM}}
-  Se procede primeramente por entrenar el modelo con un dataset, que establece la relación $(t, e)$ de las palabras $t$ y las \emph{Entities} $e$.
+% \begin{frame}{Entrenamiento y uso de redes \textsc{Bi-LSTM}}
+%   Se procede primeramente por entrenar el modelo con un dataset, que establece la relación $(t, e)$ de las palabras $t$ y las \emph{Entities} $e$.
 
-  Las librerías en uso son \textsc{TensorFlow} y \textsc{Numpy}.
-\end{frame}
+%   Las librerías en uso son \textsc{TensorFlow} y \textsc{Numpy}.
+% \end{frame}
 
 \subsection{\textsc{Modelo 3:} Búsqueda de tweets relacionados con \emph{embeddings}}
 
@@ -456,9 +458,9 @@
 
 \begin{frame}{Trabajo futuro}
   \begin{itemize}
-  \item Implementación de los modelos 2, 3, 4 propuestos
-  \item Implementar un modelo de recolección de información de redes sociales de cibercriminales de forma que sea mas fácil perfilarlos contra futuros
-  \item Realizar una visualización en dashboard de algoritmos de clustering como \textsc{SOM}
+  \item Implementación de los modelos 2, 3, 4 propuestos con propósito de ayudar al perfilamiento de cibercriminales.
+  \item Implementar un modelo de recolección de información de redes sociales de cibercriminales de forma que sea mas fácil perfilarlos contra futuros.
+  \item Realizar una visualización en dashboard de algoritmos de clustering como \textsc{SOM}.
   \end{itemize}
 \end{frame}
 
