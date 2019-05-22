@@ -21,7 +21,7 @@
 \newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
 
 \title{Advanced Natural Language Processing Techniques to Profile Cybercriminals}
-\subtitle{\textsc{Proyecto de grado}}
+\subtitle{\textsc{Proyecto de grado 1}}
 \date{\today}
 % \date{}
 \institute{Escuela Colombiana de Ingenier\'{\i}a Julio Garavito}
@@ -204,7 +204,7 @@
   \end{alertblock}
 \end{frame}
 
-\begin{frame}{\textsc{Modelo 1:} Solución}
+\begin{frame}{\textsc{Modelo 1:} Predicción de etiquetas de Twitter}
   \begin{alertblock}{?`Que hacer?}
     Con un modelo de regresión lineal predecir los hashtags de los tweets.
   \end{alertblock}
@@ -242,7 +242,7 @@
 
 \begin{frame}{Representación de palabras: \textsc{TF--IDF}}
   \textsc{TF--IDF} $=$ Term Frequency -- Inverse Document Frequency
-  \begin{alertblock}{Proposito}
+  \begin{alertblock}{Propósito}
     Darle mayor importancia a las palabras que ocurren con frecuencia intermedia en el documento $d$ y en el corpus $D$.
   \end{alertblock}
   \begin{equation*} \label{eq:tf-repr}
@@ -315,20 +315,137 @@
     \end{figure}
   \end{minipage}%
   \hfill%
-  \begin{minipage}{0.4\textwidth}
-    Se entrenan $C$ estimadores para cada clase con algún algoritmo de optimización (ej. gradiente descendiente). \\
+  \begin{minipage}{0.45\textwidth}
+    Se entrenan $C$ estimadores $\vtheta_i$ para cada clase con algún algoritmo de optimización (ej. gradiente descendiente). \\
     
-    Se determina un estimador $c \in \{1, C\}$, que se calcula como:
+    Se determina un estimador $c \in \{1, \ldots ,C\}$, que se calcula como:
     \begin{equation*}
       c = \text{arg max}_i \, \sigmoid(\vtheta_i^{\top} \vx)
     \end{equation*}
   \end{minipage}
 \end{frame}
 
+\begin{frame}{Predicción de hashtags}
+  A partir de un diccionario previamente definido a entrenar el \textsc{One vs Rest} de forma:
+  \begin{equation*}
+    \{(i, h)\} \,;\, h \in \text{hashtags} \,;\, i \in \{1, \ldots, C\}
+  \end{equation*}
+
+  De forma que se recupera el hashtag $h$ correspondiente a partir de la clase estimada $i$ por \textsc{One vs Rest}.
+\end{frame}
+
 \subsection{\textsc{Modelo 2:} Reconocimiento de \textsc{Named Entities} con redes \textsc{LSTM}}
 
+\begin{frame}{\textsc{Modelo 2:} Problema}
+  \alert{?`De que y de quienes están hablando?}
+  
+\begin{alertblock}{Tweet: @realDonaldTrump}
+  \begin{quote}
+    ``The \textbf{Democrats} new and pathetically untrue sound bite is that we are in a “Constitutional Crisis.” They and their partner, the \textbf{Fake News Media}, are all told to say this as loud and as often as possible. They are a sad JOKE! We may have the strongest \textbf{Economy} in our history, best ...''
+  \end{quote}
+\end{alertblock}
+\end{frame}
+
 \begin{frame}{\textsc{Modelo 2:} Reconocimiento de \textsc{Named Entities} con redes \textsc{LSTM}}
-  \todo[inline]{Por hacer}
+  Son redes neuronales recurrentes que son capaces de reconocer \textsc{Named Entities}.
+  \begin{table}
+    \centering
+    \begin{tabular}{l|lllllll} 
+      \textbf{Texto}    & Donald   & Trump & es & presidente & de & Estados & Unidos \\
+      \textbf{Etiqueta} & B-PER    & I-PER & O  & O          & O  & B-ORG   & I-ORG
+    \end{tabular}
+    \\ [1em]
+    \caption{Ejemplo de reconocimiento de \textsc{Named Entities}.}
+    \label{table:namedent-example}
+  \end{table}
+
+  \begin{table}
+    \centering
+    \begin{tabular}{rl} 
+      Otro & O \\
+      Persona & PER \\
+      Ubicación & LOC \\
+      Organización & ORG \\
+      Misceláneo & MISC \\
+    \end{tabular}
+    \caption{Categorías de \textsc{Named Entities}.}
+    \label{table:namedent-categories}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Redes neuronales recurrentes (\textsc{RNN})}
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{Images/RNN-unrolled.png}
+    \caption[Red \textsc{RNN} simplificada]{Red \textsc{RNN} simplificada. Tomado de \cite{understanding-lstm}.}
+    \label{fig:rnn-classic-simple}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{Images/LSTM3-SimpleRNN.png}
+    \caption[Arquitectura \textsc{RNN} clásica]{Arquitectura \textsc{RNN} clásica. Tomado de \cite{understanding-lstm}.}
+    \label{fig:rnn-classic}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Redes \textsc{Long Short Term Memory (LSTM)}}
+  \begin{figure}[H]
+    \centering
+    % \missingfigure{Hacer la arquitectura en yEd}
+    \includegraphics[width=0.9\textwidth]{Images/LSTM3-chain.png}
+    \caption[Arquitectura de red \textsc{LSTM} clásica]{Arquitectura de red \textsc{LSTM} clásica. Tomado de \cite{understanding-lstm}.}
+    \label{fig:lstm-classic}
+  \end{figure}
+
+  \begin{alertblock}{Nota}
+    Estas redes son solo \emph{feedforward} (e.g. hacia adelante). Solo se basan en entradas pasadas.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Redes \textsc{Bidirectional Long Short Term Memory (Bi-LSTM)}}
+  \begin{figure}[H]
+    \centering
+    % \missingfigure{Hacer la arquitectura en yEd}
+    \includegraphics[width=0.6\textwidth]{Images/bilstm-arch.pdf}
+    \caption[Etiquetado con una \textsc{Bi-LSTM}]{Etiquetado con una \textsc{Bi-LSTM}. Tomado de \cite{Huang2015}.}
+    \label{fig:bilstm-arch}
+  \end{figure}
+
+  \begin{alertblock}{Nota}
+    Estas redes son \emph{feedforward} como \emph{backward}. Se basan de entradas pasadas y futuras.
+  \end{alertblock}
+\end{frame}
+
+
+\begin{frame}{Entrenamiento y uso de redes \textsc{Bi-LSTM}}
+  Se procede primeramente por entrenar el modelo con un dataset, que establece la relación $(t, e)$ de las palabras $t$ y las \emph{Entities} $e$.
+
+  Las librerías en uso son \textsc{TensorFlow} y \textsc{Numpy}.
+\end{frame}
+
+\subsection{\textsc{Modelo 3:} Búsqueda de tweets relacionados con \emph{embeddings}}
+
+\begin{frame}{?`Que son los \emph{embeddings}?}
+  Son espacios de vectores $n$--dimensionales que se mapean según una palabra.
+
+  Tómese $\vp_{t}$ como el vector que representa el termino $t$ y a $d$ como la distancia calculada entre los vectores (típicamente la distancia \textbf{coseno}).
+
+  \begin{alertblock}{Ejemplo}
+    $d(\vp_{\text{asombroso}}, \vp_{\text{genial}})$ debería tener un valor bajo.
+    
+    $d(\vp_{\text{asombroso}}, \vp_{\text{terrible}})$ debería tener un valor alto.
+  \end{alertblock}
+
+  También se pueden representar varias palabras de un documento en un solo vector por medio de sumarlos. (i.e. $\sum_{t \in d}\vp_{t}$).
+\end{frame}
+
+\begin{frame}{\textsc{Modelo 3:} Búsqueda de tweets relacionados con \emph{embeddings}}
+  Es posible categorizar los $k$ textos mas parecidos a una consulta $q$ en base a su embedding con otros textos recopilados.
+
+  \begin{alertblock}{StarSpace}
+    Genera embeddings en base a un dataset de entrenamiento. Desarrollado por Facebook Research en 2017 \cite{starspace}. 
+  \end{alertblock}
 \end{frame}
 
 \section{Conclusiones y trabajo futuro}
@@ -338,7 +455,11 @@
 \end{frame}
 
 \begin{frame}{Trabajo futuro}
-  \todo[inline]{Por hacer}
+  \begin{itemize}
+  \item Implementación de los modelos 2, 3, 4 propuestos
+  \item Implementar un modelo de recolección de información de redes sociales de cibercriminales de forma que sea mas fácil perfilarlos contra futuros
+  \item Realizar una visualización en dashboard de algoritmos de clustering como \textsc{SOM}
+  \end{itemize}
 \end{frame}
 
 \appendix
