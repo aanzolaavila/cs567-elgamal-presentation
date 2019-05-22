@@ -152,7 +152,7 @@
 
 \subsection{Clasificación con \textsc{Support Vector Machines (SVM)}}
 \begin{frame}{Clasificación con \textsc{Support Vector Machines (SVM)}}
-  Técnica de clasificación con una frontera de decisión en forma de hiper-planos que permiten aplicaciones con vectores de alta dimensionalidad. En su forma no--lineal se utiliza una función polinomial de similaridad $K$ para no afectar el rendimiento por la alta dimensionalidad.
+  Técnica de \textbf{clasificación} con una frontera de decisión en forma de hiper-planos que permiten aplicaciones con vectores de alta dimensionalidad.
   \begin{figure}
     \centering
     \includegraphics[width=0.5\textwidth]{Images/svm-hyperplanes.pdf}
@@ -196,6 +196,25 @@
 
 \subsection{\textsc{Modelo 1:} Predicción de etiquetas de Twitter}
 
+\begin{frame}{\textsc{Modelo 1:} Problema}
+  \begin{alertblock}{Tweet}
+    \begin{quote}
+    ``Really excited to add @plaidavenger to my \textbf{\#deathlist} along with Italy and @Plaid\_Obama after receiving that information. \textbf{\#KillEveryone} \textbf{\#ISIS}''
+    \end{quote}
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{\textsc{Modelo 1:} Solución}
+  \begin{alertblock}{?`Que hacer?}
+    Con un modelo de regresión lineal predecir los hashtags de los tweets.
+  \end{alertblock}
+  \vspace{2em}
+  
+  \begin{tabular}{p{0.47\textwidth} p{0.05\textwidth} p{0.46\textwidth}}
+    ``Really excited to add @plaidavenger to my deathlist along with Italy and @Plaid\_Obama after receiving that information.'' & $\mathlarger{\mathlarger{\mathlarger{\Rightarrow}}}$ & \textbf{\#deathlist, \#KillEveryone, \#ISIS}
+    \end{tabular}
+\end{frame}
+
 \begin{frame}{Representación de palabras: \textsc{Bag of Words}}
   $N$ es el tamaño del diccionario de términos $D$ (e.g. $N = |D|$).
   \begin{equation*} \label{eq:bow-repr1}
@@ -209,6 +228,9 @@
   \begin{alertblock}{Representación de palabras en vectores para \textsc{BoW}}
     Para un termino individual su vector representativo se define como:
     \begin{equation*}
+      \ve^{(i)} = [0, \ldots, 1, \ldots, 0] \leftarrow \text{posicion } i\text{--\'esima}
+    \end{equation*}
+    \begin{equation*}
       \ve^{(i)}, (t, i) \in \text{word2idx}
     \end{equation*}
     Para un documento $d$ de términos, se calcula por cada termino que existen dentro del diccionario su vector representativo como:
@@ -220,6 +242,9 @@
 
 \begin{frame}{Representación de palabras: \textsc{TF--IDF}}
   \textsc{TF--IDF} $=$ Term Frequency -- Inverse Document Frequency
+  \begin{alertblock}{Proposito}
+    Darle mayor importancia a las palabras que ocurren con frecuencia intermedia en el documento $d$ y en el corpus $D$.
+  \end{alertblock}
   \begin{equation*} \label{eq:tf-repr}
     \text{tf}(t,d) = \text{Frecuencia del termino (o n--grama) } t \text{ en el documento } d
   \end{equation*}
@@ -233,24 +258,71 @@
   \end{equation*}
 \end{frame}
 
-\begin{frame}{Regresión logística $\sigma(x)$ y One vs Rest}
-  \begin{figure}[H]
-    \centering
-    \begin{tikzpicture}
-      \begin{axis}[ 
-        xlabel=$x$,
-        ylabel={$\sigmoid(x)$}
-        ] 
-        \addplot {1 / (1+exp(-x))}; 
-      \end{axis}
-    \end{tikzpicture}
-    \caption[Gráfica de función sigmoide]{Gráfica de función sigmoide.}
-    \label{fig:logits-example}
-  \end{figure}
+\begin{frame}{Regresión lineal}
+  Para una vector de parámetros $\vtheta$ y un vector de características $\vx$, la regresión lineal se puede definir como:
+  \begin{equation*}
+    \hat{y}(\vx, \vtheta) = \vtheta^{\top} \vx = \theta_0 + \theta_1 x_1 + \cdots + \theta_n x_n
+  \end{equation*}
+
+  Donde $\hat{y}(\vx, \vtheta) \,:\, \R^n \times \R^n \rightarrow \R$.
+  
+  $\theta_0$ se le conoce como el \emph{bias} del modelo.
+
+  El objetivo es que para una salida esperada $y$ se tenga la salida $\hat{y}$ con menor error por medio de ajustar los valores de $\vtheta$. De forma que se quiere:
+  \begin{equation*}
+    \vtheta = \text{arg m\'{\i}n}_{\vtheta} | \hat{y}(\vx, \vtheta) - y|
+  \end{equation*}
+
 \end{frame}
 
-\begin{frame}{\textsc{Modelo 1:} Predicción de etiquetas de Twitter}
-  \todo[inline]{Por hacer}
+\begin{frame}{Regresión logística $\sigma(x)$}
+  \noindent\begin{minipage}{0.6\textwidth}
+    \begin{figure}[H]
+      \centering
+      \begin{tikzpicture}[scale=0.80]
+        \begin{axis}[ 
+          xlabel=$x$,
+          ylabel={$\sigmoid(x)$}
+          ] 
+          \addplot {1 / (1+exp(-x))}; 
+        \end{axis}
+      \end{tikzpicture}
+      \caption[Gráfica de función sigmoide]{Gráfica de función sigmoide.}
+      \label{fig:logits-example}
+    \end{figure}
+  \end{minipage}%
+  \hfill%
+  \begin{minipage}{0.35\textwidth}
+    \begin{equation*}
+      \sigmoid(x) = \frac{1}{1+\exp(-x)}
+    \end{equation*}
+    
+    \begin{equation*}
+      \sigmoid(x) \,:\, \R \rightarrow (0,1)
+    \end{equation*}
+    Evita problemas de \textsc{Bias} y \textsc{Overfitting} del modelo
+  \end{minipage}
+\end{frame}
+
+\begin{frame}{One vs Rest}
+  \noindent\begin{minipage}{0.5\textwidth}
+    \begin{figure}[H]
+      \centering
+      % \missingfigure{Hacer la arquitectura en yEd}
+      \includegraphics[width=\textwidth]{Images/one-vs-rest.pdf}
+      \caption[Algoritmo de One vs Rest]{Algoritmo de One vs Rest.}
+      \label{fig:ovr-algo}
+    \end{figure}
+  \end{minipage}%
+  \hfill%
+  \begin{minipage}{0.4\textwidth}
+    Se entrenan $C$ estimadores para cada clase con algún algoritmo de optimización (ej. gradiente descendiente). \\
+    
+    Se determina un estimador $c \in \{1, C\}$, que se calcula como:
+    \begin{equation*}
+      c = \text{arg max}_i \, \sigmoid(\vtheta_i^{\top} \vx)
+    \end{equation*}
+  \end{minipage}
 \end{frame}
 
 \subsection{\textsc{Modelo 2:} Reconocimiento de \textsc{Named Entities} con redes \textsc{LSTM}}
