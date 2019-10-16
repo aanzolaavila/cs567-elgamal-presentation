@@ -2,7 +2,7 @@
 
 \usetheme[progressbar=frametitle]{metropolis}
 \usepackage{appendixnumberbeamer}
-\usepackage[english,spanish]{babel}
+\usepackage[english]{babel}
 \usepackage{relsize}
 % \usepackage[utf8]{inputenc} % Required for inputting international characters
 % \usepackage[T1]{fontenc} % Output font encoding for international characters
@@ -10,6 +10,7 @@
 \usepackage{booktabs}
 \usepackage{bm}
 \usefonttheme{professionalfonts}
+\usepackage{mathtools}
 \usepackage{mathspec}
 \usepackage{todonotes}
 \usepackage[scale=2]{ccicons}
@@ -20,120 +21,111 @@
 \usepackage{xspace}
 \newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
 
-\title{Advanced Natural Language Processing Techniques to Profile Cybercriminals}
-\subtitle{\textsc{Proyecto de grado 1}}
+\title{Distributed blinding for distributed ElGamal re-encryption}
+% \subtitle{\textsc{Proyecto de grado 1}}
 \date{\today}
 % \date{}
-\institute{Escuela Colombiana de Ingenier\'{\i}a Julio Garavito}
-\titlegraphic{\hfill\includegraphics[height=1.5cm]{Images/escuela-logo.png}}
-
-% 1.Nombre del proyecto
-% 1.Integrantes
-% 1.Director
-% 2.Agenda
-% 3.Objetivo general y específicos (para todo el proyecto: PGR1 y PGR2)
-% 4.Justificación del proyecto
-% 5.Resultados propuestos
-% 5.Productos obtenidos a la fecha (explicación técnica de los resultados) (Seccion 3)
-% 6.Marco teorico (x3)
-% 7.Problemas y soluciones
-% 7.Modelo 1 (x3)
-% 7.Modelo 2 (x3)
-% 8.Trabajo futuro y conclusiones
+\institute{Boise State University}
+\titlegraphic{\hfill\includegraphics[width=4cm]{Images/boisestate-leftalignedmark-2color.png}}
 
 \begin{document}
 
-\author{%
-  \begin{tabular}{rl}
-    \textsc{\scriptsize \textbf{Autor}}    & Alejandro \textsc{Anzola \'Avila} \\
-    \textsc{\scriptsize \textbf{Director}} & Daniel Orlando \textsc{D\'{\i}az L\'opez}, \textit{PhD} \\
-  \end{tabular}
-  \vspace{1em}
-}
+\author{Alejandro \textsc{Anzola \'Avila}}
 
 \input{math_commands.tex} % para definir una notacion
 
 \maketitle
 
-\begin{frame}{Agenda}
-  \setbeamertemplate{section in toc}[sections numbered]
-  % \tableofcontents[hideallsubsections]
-  \tableofcontents
+% \begin{frame}{Agenda}
+%   \setbeamertemplate{section in toc}[sections numbered]
+%   % \tableofcontents[hideallsubsections]
+%   \tableofcontents
+% \end{frame}
+
+
+
+\section{Definitions}
+\begin{frame}{Motivation}
+  This paper shows a protocol for interacting \emph{distributed services} that emphasizes on \textbf{step flexibility} rather than evaluate on quantitative measures, such as number of messages exchanged or total computing time.
 \end{frame}
 
-\section{Objetivos y justificación}
-
-\begin{frame}{Objetivo general}
-  Generar herramientas y estrategias para el perfilado de cibercriminales con ayuda de metodologías de \emph{NLP} aplicado a datos recolectados de comunicaciones y redes sociales.
+\subsection{ElGamal public key encryption}
+\begin{frame}{ElGamal public key encryption}
+  Is based on large prime numbers $p$ and $q$ such that
+  \begin{equation*}
+    p = 2q +1
+  \end{equation*}
+  Let $\gG_p$ be a cyclic subgroup (of order $q$) of $\Z_p^{\ast} = \{i \mid 1 \le i \le p-1\}$, where $g$ is a generator of $\gG_p$. \\
+  Any $k\in\Z_q^{\ast}$ can be an ElGamal private key and $K = (p, q, g, y)$ is the public key, and $y = g^{k} \mod p$.
 \end{frame}
 
-\begin{frame}{Objetivos específicos}
+\begin{frame}{ElGamal public key encryption}
+  An ElGamal ciphertext $E(m)$ for plaintext $m\in\gG_p$ is a pair $(g^r, my^{r})$ with $r$ uniformly and randomly chosen from $\Z_q^{\ast}$. \\
+  Ciphertext $E(m) = (a, b)$ is decrypted by computing $b / a^k$.
+  \begin{equation*}
+    b/a^k = my^{r} / {(g^{r})}^{k} = m {(g^k)}^r / {(g^r)}^k = m
+  \end{equation*}
+
+  When $E(m, r)$ is shown, the value of $r$ is made explicit. Therefore $\gE(m)$ is the set $\{ E(m, r) \mid r \in \Z_q^{\ast} \}$ of all possible ciphertexts for $m$.
+\end{frame}
+
+\begin{frame}{ElGamal public key encryption properties}
+  Given $E(m_1) = (a_1, b_1)$, $E(m_2) = (a_2, b_2)$ and $E(m) = (a, b)$, we have
   \begin{itemize}
-  \item Diseñar e implementar una solución de lenguaje natural para realizar el perfilado de sospechosos.
-
-  \item Identificar el estado del arte en sistemas que usan \emph{NLP} para apoyar agencias de seguridad del Estado.
-    
-  \item Implementación de artefactos para la construcción de \emph{datasets} con información recolectada de medios privados como de fuentes abiertas.
-    
-  \item Validar la solución desarrollada frente a un escenario real.
-
-  \item Modelado de diferentes metodologías, heurísticas y meta--heurísticas para \emph{NLP}.
+  \item ${E(m)}^{-1} = (a^{-1}, b^{-1})$
+  \item $m^{\prime} \cdot E(m) = (a, m^{\prime}, b)$
+  \item $E(m_1) \cdot E(m_2) = (a_1 a_2, b_1 b_2)$
   \end{itemize}
   
+  The following properties hold
+  \begin{center}
+    \begin{tabular}{rp{5cm}}
+      \textbf{ElGamal Inverse}        & ${E(m)}^{-1} \in \gE(m^{-1})$ \\
+      \textbf{ElGamal Juxtaposition}  & $m^{\prime} \cdot E(m, r) = E(m^{\prime} m)$ \\
+      \textbf{ElGamal Multiplication}\footnote{Homomorphic property} & If $r_1 + r_2 \in \Z_q^{\ast}$ then $E(m_1, r_1) \times E(m_2, r_2) \in \gE(m_1 m_2)$ \\
+    \end{tabular}
+  \end{center}
 \end{frame}
 
-\begin{frame}{Justificación}
-  En EE.UU. antes del 11 de septiembre, las agencias de seguridad ponían mas énfasis en \textbf{reaccionar} ante los eventos en vez de \textbf{prevenirlos} \cite{mena2003investigative}.
+% ================
 
-  El trabajo del actual proyecto se enfoca en heurísticas y meta-heurísticas para prevenir incidentes al identificar a posibles perpetradores.
-\end{frame}
-
-\section{Resultados propuestos y productos obtenidos}
-
-\begin{frame}{Resultados propuestos}
+\section{Re-encryption and Distributed Blinding protocols}
+\begin{frame}{Re-encryption protocol}
+  The basic re-encryption protocol is
   \begin{enumerate}
-  \item Entendimiento del uso de \textsc{Data Science} en ciber-inteligencia
-  \item Entendimiento de las heurísticas de \textsc{NLP}
-  \item Proponer modelos de \textsc{Machine Learning} para la identificación de cibercriminales
-  \item Implementación de los modelos propuestos con sistemas Estado-del-arte
-  \item Pruebas de eficacia y eficiencia de los modelos propuestos para facilitar la tarea de perfilado
+  \item Pick a random\footnote{The possibility of compromised servers makes computing $\rho$, $E_A(\rho)$, and $E_B(\rho)$ trickier.} $\rho\in\gG_p$, then compute $E_A(\rho)$ and $E_B(\rho)$
+  \item Compute blinded ciphertext $E_A(m\rho) \coloneqq E_A(m) \times E_A(\rho)$
+  \item Employ threshold decryption to obtain blinded plaintext $m\rho$ from blinded ciphertext $E_A(m\rho)$.
+  \item Compute $E_B(m) \coloneqq m\rho \cdot {E_B(\rho)}^{-1}$
   \end{enumerate}
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Productos obtenidos}
-  \begin{enumerate}
-  \item Entendimiento de las generalidades de \textsc{Data Science}:
-    \begin{itemize}
-    \item Tipos de \textsc{Machine Learning}
-    \item Sistemas de detección de anomalías
-    \item Diferentes modalidades de clustering
-    \end{itemize}
-  \item Identificacion de modelos de \textsc{NLP} aplicables para el perfilado de cibercriminales
-    
-  \item Entendimiento de los modelos de clasificación y clustering:
-    \begin{itemize}
-    \item Clasificador de Na\"ive Bayes
-    \item Maquinas de soporte vectorial
-    \item Mapas autoorganizados
-    \end{itemize}
-    
-  \item Entendimiento de los modelos utilizados en \textsc{NLP}:
-    \begin{itemize}
-    \item Predicción de etiquetas con modelos de regresión lineal
-    \item Reconocimiento de \textsc{Named Entities}
-    \item Uso de \emph{embeddings} generados con \textsc{StarSpace} para los $k$ textos mas similares
-    \end{itemize}
-    
-  \item Propuesta de modelos de \textsc{NLP} para el perfilado de cibercriminales:
-    \begin{itemize}
-    \item Modelo de predicción de hashtags de Twitter con modelos lineales
-    \item Modelo de reconocimiento de \textsc{Named Entities} con redes \textsc{LSTM}
-    \item Búsqueda de tweets relacionados con \emph{embeddings} de \textsc{StarSpace}
-    \item Modelo de clustering en redes \textsc{SOM} con \emph{embeddings} de \textsc{StarSpace}
-    \end{itemize}
-    
-  \end{enumerate}
+\begin{frame}{Distributed blinding protocol}
+  Given two related public keys $K_A$ and $K_B$, the distributed blinding protocol must satisfy the following correctness requirements:
+  \begin{itemize}
+  \item \textbf{Randomness-Confidentiality}: Blinding factor $\rho\in\gG_p$ is chosen randomly and kept confidential from the adversary.
+  \item \textbf{Consistency}: The protocol outputs a pair of ciphertexts $E_A(\rho)$ and $E_B(\rho)$.
+  \end{itemize}
 \end{frame}
+
+% ================
+
+\subsection{Notation}
+\begin{frame}{Notation}
+  \begin{center}
+    \begin{tabular}{rl}
+      \textbf{Symbol} & \textbf{Description} \\
+      $S$ & Service \\
+      $n$ & Number of services \\
+      $K_S$ & Service $S$ public key \\
+      $k_S$ & Service $S$ private key \\
+      $(n, f)$ & Threshold cryptography scheme \\
+      $m$ & Plaintext message \\
+      $\rho$ & Blinding factor \\
+    \end{tabular}
+  \end{center}
+\end{frame}
+
 
 \section{Marco teórico}
 
