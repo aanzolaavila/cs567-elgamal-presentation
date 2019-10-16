@@ -50,16 +50,16 @@
 \end{frame}
 
 \subsection{ElGamal public key encryption}
-\begin{frame}{ElGamal public key encryption}
+\begin{frame}[allowframebreaks]{ElGamal public key encryption}
   Is based on large prime numbers $p$ and $q$ such that
   \begin{equation*}
     p = 2q +1
   \end{equation*}
   Let $\gG_p$ be a cyclic subgroup (of order $q$) of $\Z_p^{\ast} = \{i \mid 1 \le i \le p-1\}$, where $g$ is a generator of $\gG_p$. \\
   Any $k\in\Z_q^{\ast}$ can be an ElGamal private key and $K = (p, q, g, y)$ is the public key, and $y = g^{k} \mod p$.
-\end{frame}
 
-\begin{frame}{ElGamal public key encryption}
+  \framebreak
+
   An ElGamal ciphertext $E(m)$ for plaintext $m\in\gG_p$ is a pair $(g^r, my^{r})$ with $r$ uniformly and randomly chosen from $\Z_q^{\ast}$. \\
   Ciphertext $E(m) = (a, b)$ is decrypted by computing $b / a^k$.
   \begin{equation*}
@@ -100,382 +100,118 @@
   \end{enumerate}
 \end{frame}
 
-\begin{frame}{Distributed blinding protocol}
+\begin{frame}[allowframebreaks]{Distributed blinding protocol}
   Given two related public keys $K_A$ and $K_B$, the distributed blinding protocol must satisfy the following correctness requirements:
   \begin{itemize}
   \item \textbf{Randomness-Confidentiality}: Blinding factor $\rho\in\gG_p$ is chosen randomly and kept confidential from the adversary.
   \item \textbf{Consistency}: The protocol outputs a pair of ciphertexts $E_A(\rho)$ and $E_B(\rho)$.
   \end{itemize}
-\end{frame}
 
-% ================
+  They make an assumption about ``Compromised servers'':
+  \begin{alertblock}{Failstop adversaries}
+    Compromised servers are limited to disclosing locally stored information or halting prematurely.
+  \end{alertblock}
+  
+  \framebreak
 
-\subsection{Notation}
-\begin{frame}{Notation}
-  \begin{center}
-    \begin{tabular}{rl}
-      \textbf{Symbol} & \textbf{Description} \\
-      $S$ & Service \\
-      $n$ & Number of services \\
-      $K_S$ & Service $S$ public key \\
-      $k_S$ & Service $S$ private key \\
-      $(n, f)$ & Threshold cryptography scheme \\
-      $m$ & Plaintext message \\
-      $\rho$ & Blinding factor \\
-    \end{tabular}
-  \end{center}
-\end{frame}
-
-
-\section{Marco teórico}
-
-\subsection{Clasificador \textsc{Na\"ive Bayes}}
-\begin{frame}{Teorema de Bayes}
-  % \todo[inline]{Por hacer}
-  Para variables aleatorias $\rx$ e $\ry$, se tiene que la probabilidad condicional $P(\ry \mid \rx)$ es definida como
+  To compute a confidential blinding factor $\rho$, its sufficient to calculate:
   \begin{equation*}
-    P(\ry \mid \rx) = \frac{P(\rx \mid \ry) P(\ry)}{P(\rx)}
+    \prod_{i\in I}\rho_i
   \end{equation*}
+  where $I$ is the set of at least $f+1$ servers. And each server $i\in I$ generates a random $\rho_i$.
 \end{frame}
 
-\begin{frame}{Clasificador \textsc{Na\"ive Bayes}}
-  Un clasificador de Na\"{\i}ve Bayes estima la probabilidad condicional de las clases por medio de suponer que los atributos son condicionalmente independientes, dado la etiqueta de clasificación $y$. Donde cada conjunto de $d$ atributos $\sX=\{ x_1, \ldots, x_d \}$ se tiene
-  \begin{equation*}
-    P(\sX\mid\ry=y) = \prod_{i=1}^{d} P(x_i\mid\ry=y)
-  \end{equation*}
+\begin{frame}[allowframebreaks]{Failstop adversary distributed blinding protocol}
+  \begin{enumerate}
+  \item Coordinator $C_j$ initiates protocol by sending to every server in $B$ an \texttt{init} message.
+  \item Upon receipt of an init message from $C_j$, a server $i$:
+    \begin{enumerate}
+    \item Generates an independent random number $\rho_i$
+    \item Computes encrypted contribution $(E_A(\rho_i), E_B(\rho))$
+    \item Sends contribution to coordinator $C_j$
+    \end{enumerate}
 
-  El clasificador computa la probabilidad posterior para cada clase $\ry$ como
-  \begin{equation*}
-    P(\ry\mid \sX) = \frac{P(\ry) \prod_{i=1}^{d}P(x_i\mid\ry)}{P(\sX)} \Rightarrow P(\ry) \prod_{i=1}^{d}P(x_i\mid\ry)
-  \end{equation*}
-  \alert{Nota} Puede ignorarse $P(\sX)$ debido a que es un termino constante. Para esto se realiza una normalización con una constante $\epsilon$ de forma que $\sum_{\forall \ry \in \sY} \epsilon^{-1} P(\ry\mid \sX) = 1$.
-\end{frame}
+  \item Upon receipt of contribute messages from a set $I$ comprising $f+1$ servers in $B$
+    \begin{enumerate}
+    \item $C_j$ computes: \\
+      $E_A(\rho) = \bigtimes_{i\in I} E_A(\rho_i)$ \\
+      $E_B(\rho) = \bigtimes_{i\in I} E_B(\rho_i)$
+      \item Send $(E_A(\rho), E_B(\rho))$ to service $A$
+    \end{enumerate}
+  \end{enumerate}
 
-\subsection{Clasificación con \textsc{Support Vector Machines (SVM)}}
-\begin{frame}{Clasificación con \textsc{Support Vector Machines (SVM)}}
-  Técnica de \textbf{clasificación} con una frontera de decisión en forma de hiper-planos que permiten aplicaciones con vectores de alta dimensionalidad.
-  \begin{figure}
-    \centering
-    \includegraphics[width=0.5\textwidth]{Images/svm-hyperplanes.pdf}
-    \caption[Maximum Margin Hyperplanes]{Maximum Margin Hyperplanes. Tomado de \cite{tan2005introduction}.}
-    \label{fig:svm-hyperplanes}
-  \end{figure}
-\end{frame}
+  $E_x(\rho) = \bigtimes_{i\in I} E_x(\rho_i, r_i)$ requires that $\sum_{i\in I} r_i  \in \Z_q^{\ast}$ holds.
+  
+  \framebreak
 
-\subsection{\textsc{Self-organizing Maps (SOM)}}
-\begin{frame}{\textsc{Self-organizing Maps (SOM)}}
-  Es un mapa discreto de $o$ neuronas con vectores $\vw \in \R^m$ que se adaptan a una entrada de $\mX \in \R^{m \times N}$ de $N$ patrones. Tiene una adaptación con una tasa de aprendizaje $\alpha_t$ y un área de afectación $\sigma_t$ que se reducen por cada iteración $t \in \{0, \ldots, T\}$.
-  \begin{figure}
-    \centering
-    \includegraphics[width=0.75\textwidth]{Images/som-adaptive-proc.pdf}
-    \caption[Proceso de adaptación de \textsc{SOM}]{Proceso de adaptación de \textsc{SOM}, (a)~uni--dimensional, (b)~bi--dimensional. Tomado de \cite{de2006fundamentals}.}
-    \label{fig:som-adap-proc}
-  \end{figure}
-\end{frame}
-
-% \begin{frame}{Ejemplo de \textsc{SOM}}
-%   \begin{figure}
-%     \centering
-%     \includegraphics[width=0.75\textwidth]{Images/som-implementation-example25.pdf}
-%     \caption[Ejemplo de salida de \textsc{som} uni-dimensional]{Ejemplo de salida de \textsc{som} uni-dimensional con 25 neuronas. Implementación propia.}
-%     \label{fig:som-impl-example}
-%   \end{figure}
-% \end{frame}
-
-\begin{frame}{Aplicación de \textsc{SOM} en perfilamiento de criminales}
-  \begin{figure}
-    \centering
-    \includegraphics[width=0.75\textwidth]{Images/som-example.png}
-    \caption[Ejemplo de uso de \textsc{SOM} en aplicaciones de perfilado]{Ejemplo de uso de \textsc{SOM} en aplicaciones de perfilado. Tomado de \cite{mena2003investigative}.}
-    \label{fig:som-example}
-  \end{figure}
+  To cope with faulty coordinators and guarantee protocol termination, $f+1$ coordinators are used, that way at least one will complete the protocol.
 \end{frame}
 
 % ================================================================
 
-\section{Problemas y soluciones}
+\section{Defending against malicious attacks}
 
-\subsection{\textsc{Modelo 1:} Predicción de etiquetas de Twitter}
+\begin{frame}{Defending against malicious attacks}
+  Three forms of misbehaviour become possible:
+  \begin{enumerate}
+  \item Servers choose contributions that are not independent
+  \item The encrypted contribution from each server $i$ \textbf{not} being of the form $(E_A(\rho_i), E_B(\rho^{\prime}_i))$, where $\rho_i = \rho^{\prime}_i$
+  \item Servers and coordinators not following the protocol in other ways
+  \end{enumerate}
+\end{frame}
 
-\begin{frame}{\textsc{Modelo 1:} Problema}
-  \begin{alertblock}{Tweet}
-    \begin{quote}
-    ``Really excited to add @plaidavenger to my \textbf{\#deathlist} along with Italy and @Plaid\_Obama after receiving that information. \textbf{\#KillEveryone} \textbf{\#ISIS}''
-    \end{quote}
+\begin{frame}{Randomness-Confidentiality}
+  \begin{alertblock}{Problem}
+    Suppose $\{ (E_A(\rho_i), E_B(\rho_i)) \mid 1 \le i \le f \}$. After receiving these, a compromised server generates two ciphertexts $E_A(\hat{\rho}_i)$ and $ E_B(\hat{\rho}_i)$ and constructs it in a way that does:\\
+    \begin{center}
+    $
+      (E_A(\hat{\rho}_i) \times {(\bigtimes_{i=1}^{f}E_A(\rho_i))}^{-1} , E_B(\hat{\rho}_i) \times {(\bigtimes_{i=1}^{f}E_B(\rho_i))}^{-1})
+    $
+    \end{center}
+  \end{alertblock}
+
+  \begin{alertblock}{Solution}
+    Instead of sending an encrypted message to the coordinator, each server sends a \emph{commitment}, which is a cryptographic hash of that encrypted contribution. And only after the coordinator has received $2f+1$ commitments does it solicit encrypted contributions from the servers. Then it needs to receive $f+1$ encrypted contributions.
   \end{alertblock}
 \end{frame}
 
-\begin{frame}{\textsc{Modelo 1:} Predicción de etiquetas de Twitter}
-  \begin{alertblock}{?`Que hacer?}
-    Con un modelo de regresión lineal predecir los hashtags de los tweets.
+\begin{frame}{Encrypted contribution consistency}
+  \begin{alertblock}{Problem}
+    The encrypted contribution from each server $i$ \textbf{not} being of the form $(E_A(\rho_i), E_B(\rho^{\prime}_i))$, where $\rho_i = \rho^{\prime}_i$
   \end{alertblock}
-  \vspace{2em}
-  
-  \begin{tabular}{p{0.47\textwidth} p{0.05\textwidth} p{0.46\textwidth}}
-    ``Really excited to add @plaidavenger to my deathlist along with Italy and @Plaid\_Obama after receiving that information.'' & $\mathlarger{\mathlarger{\mathlarger{\Rightarrow}}}$ & \textbf{\#deathlist, \#KillEveryone, \#ISIS}
-    \end{tabular}
-\end{frame}
 
-\begin{frame}{Representación de palabras: \textsc{Bag of Words}}
-  $N$ es el tamaño del diccionario de términos $D$ (e.g. $N = |D|$).
-  \begin{equation*} \label{eq:bow-repr1}
-    \text{word2idx} = \Big\{(t_i, i) : \forall i \in \{1, \ldots, N\} \Big\}
-  \end{equation*}
-  
-  \begin{equation*} \label{eq:bow-repr2}
-    \text{idx2word} = \Big[t_1, \ldots, t_N\Big]
-  \end{equation*}
-
-  \begin{alertblock}{Representación de palabras en vectores para \textsc{BoW}}
-    Para un termino individual su vector representativo se define como:
-    \begin{equation*}
-      \ve^{(i)} = [0, \ldots, 1, \ldots, 0] \leftarrow \text{posicion } i\text{--\'esima}
-    \end{equation*}
-    \begin{equation*}
-      \ve^{(i)}, (t, i) \in \text{word2idx}
-    \end{equation*}
-    Para un documento $d$ de términos, se calcula por cada termino que existen dentro del diccionario su vector representativo como:
-    \begin{equation*} \label{eq:bow-word-vector-sum}
-      \vs = \mathlarger{\mathlarger{\sum}}_{(t, i) \in \text{word2idx}} \ve^{(i)}, t \in d
-    \end{equation*}
+  \begin{alertblock}{Solution}
+    They use a cryptographic block called \emph{verifiable dual encryption} and it is based on the \emph{non-interactive zero-knowledge proof}, for the equality of two discrete logarithms.
   \end{alertblock}
 \end{frame}
 
-\begin{frame}{Representación de palabras: \textsc{TF--IDF}}
-  \textsc{TF--IDF} $=$ Term Frequency -- Inverse Document Frequency
-  \begin{alertblock}{Propósito}
-    Darle mayor importancia a las palabras que ocurren con frecuencia intermedia en el documento $d$ y en el corpus $D$.
-  \end{alertblock}
-  \begin{equation*} \label{eq:tf-repr}
-    \text{tf}(t,d) = \text{Frecuencia del termino (o n--grama) } t \text{ en el documento } d
-  \end{equation*}
+% ================
 
-  \begin{equation*} \label{eq:idf-repr}
-    \text{idf}(t, D) = \text{log}\Bigg( \frac{N}{|\{d \in D : t \in d\}|} \Bigg) ; N = |D|
-  \end{equation*}
-
-  \begin{equation*} \label{eq:tfidf-repr}
-    \text{tf-idf}(t, d, D) = \text{tf}(t, d) \cdot \text{idf}(t, D)
-  \end{equation*}
-\end{frame}
-
-\begin{frame}{Regresión lineal}
-  Para una vector de parámetros $\vtheta$ y un vector de características $\vx$, la regresión lineal se puede definir como:
-  \begin{equation*}
-    \hat{y}(\vx, \vtheta) = \vtheta^{\top} \vx = \theta_0 + \theta_1 x_1 + \cdots + \theta_n x_n
-  \end{equation*}
-
-  Donde $\hat{y}(\vx, \vtheta) \,:\, \R^n \times \R^n \rightarrow \R$.
-  
-  $\theta_0$ se le conoce como el \emph{bias} del modelo.
-
-  El objetivo es que para una salida esperada $y$ se tenga la salida $\hat{y}$ con menor error por medio de ajustar los valores de $\vtheta$. De forma que se quiere:
-  \begin{equation*}
-    \vtheta = \text{arg m\'{\i}n}_{\vtheta} | \hat{y}(\vx, \vtheta) - y|
-  \end{equation*}
-
-\end{frame}
-
-\begin{frame}{Regresión logística $\sigma(x)$}
-  \noindent\begin{minipage}{0.6\textwidth}
-    \begin{figure}[H]
-      \centering
-      \begin{tikzpicture}[scale=0.80]
-        \begin{axis}[ 
-          xlabel=$x$,
-          ylabel={$\sigmoid(x)$}
-          ] 
-          \addplot {1 / (1+exp(-x))}; 
-        \end{axis}
-      \end{tikzpicture}
-      \caption[Gráfica de función sigmoide]{Gráfica de función sigmoide.}
-      \label{fig:logits-example}
-    \end{figure}
-  \end{minipage}%
-  \hfill%
-  \begin{minipage}{0.35\textwidth}
-    \begin{equation*}
-      \sigmoid(x) = \frac{1}{1+\exp(-x)}
-    \end{equation*}
-    
-    \begin{equation*}
-      \sigmoid(x) \,:\, \R \rightarrow (0,1)
-    \end{equation*}
-    Evita problemas de \textsc{Bias} y \textsc{Overfitting} del modelo
-  \end{minipage}
-\end{frame}
-
-\begin{frame}{One vs Rest}
-  \noindent\begin{minipage}{0.5\textwidth}
-    \begin{figure}[H]
-      \centering
-      % \missingfigure{Hacer la arquitectura en yEd}
-      \includegraphics[width=\textwidth]{Images/one-vs-rest.pdf}
-      \caption[Algoritmo de One vs Rest]{Algoritmo de One vs Rest.}
-      \label{fig:ovr-algo}
-    \end{figure}
-  \end{minipage}%
-  \hfill%
-  \begin{minipage}{0.45\textwidth}
-    Se entrenan $C$ estimadores $\vtheta_i$ para cada clase con algún algoritmo de optimización (ej. gradiente descendiente). \\
-    
-    Se determina un estimador $c \in \{1, \ldots ,C\}$, que se calcula como:
-    \begin{equation*}
-      c = \text{arg max}_i \, \sigmoid(\vtheta_i^{\top} \vx)
-    \end{equation*}
-  \end{minipage}
-\end{frame}
-
-\begin{frame}{Predicción de hashtags}
-  A partir de un diccionario previamente definido a entrenar el \textsc{One vs Rest} de forma:
-  \begin{equation*}
-    \{(i, h)\} \,;\, h \in \text{hashtags} \,;\, i \in \{1, \ldots, C\}
-  \end{equation*}
-
-  De forma que se recupera el hashtag $h$ correspondiente a partir de la clase estimada $i$ por \textsc{One vs Rest}.
-\end{frame}
-
-\subsection{\textsc{Modelo 2:} Reconocimiento de \textsc{Named Entities} con redes \textsc{LSTM}}
-
-\begin{frame}{\textsc{Modelo 2:} Problema}
-  \alert{?`De que y de quienes están hablando?}
-  
-\begin{alertblock}{Tweet: @realDonaldTrump}
-  \begin{quote}
-    ``The \textbf{Democrats} new and pathetically untrue sound bite is that we are in a “Constitutional Crisis.” They and their partner, the \textbf{Fake News Media}, are all told to say this as loud and as often as possible. They are a sad JOKE! We may have the strongest \textbf{Economy} in our history, best ...''
-  \end{quote}
-\end{alertblock}
-\end{frame}
-
-\begin{frame}{\textsc{Modelo 2:} Reconocimiento de \textsc{Named Entities} con redes \textsc{LSTM}}
-  Son redes neuronales recurrentes que son capaces de reconocer \textsc{Named Entities}.
-  \begin{table}
-    \centering
-    \begin{tabular}{l|lllllll} 
-      \textbf{Texto}    & Donald   & Trump & es & presidente & de & Estados & Unidos \\
-      \textbf{Etiqueta} & B-PER    & I-PER & O  & O          & O  & B-ORG   & I-ORG
-    \end{tabular}
-    \\ [1em]
-    \caption{Ejemplo de reconocimiento de \textsc{Named Entities}.}
-    \label{table:namedent-example}
-  \end{table}
-
-  \begin{table}
-    \centering
-    \begin{tabular}{rl} 
-      Otro & O \\
-      Persona & PER \\
-      Ubicación & LOC \\
-      Organización & ORG \\
-      Misceláneo & MISC \\
-    \end{tabular}
-    \caption{Categorías de \textsc{Named Entities}.}
-    \label{table:namedent-categories}
-  \end{table}
-\end{frame}
-
-\begin{frame}{Redes neuronales recurrentes (\textsc{RNN})}
-  \begin{figure}[H]
-    \centering
-    \includegraphics[width=0.6\textwidth]{Images/RNN-unrolled.png}
-    \caption[Red \textsc{RNN} simplificada]{Red \textsc{RNN} simplificada. Tomado de \cite{understanding-lstm}.}
-    \label{fig:rnn-classic-simple}
-  \end{figure}
-
-  \begin{figure}[H]
-    \centering
-    \includegraphics[width=0.6\textwidth]{Images/LSTM3-SimpleRNN.png}
-    \caption[Arquitectura \textsc{RNN} clásica]{Arquitectura \textsc{RNN} clásica. Tomado de \cite{understanding-lstm}.}
-    \label{fig:rnn-classic}
-  \end{figure}
-\end{frame}
-
-\begin{frame}{Redes \textsc{Long Short Term Memory (LSTM)}}
-  \begin{figure}[H]
-    \centering
-    % \missingfigure{Hacer la arquitectura en yEd}
-    \includegraphics[width=0.9\textwidth]{Images/LSTM3-chain.png}
-    \caption[Arquitectura de red \textsc{LSTM} clásica]{Arquitectura de red \textsc{LSTM} clásica. Tomado de \cite{understanding-lstm}.}
-    \label{fig:lstm-classic}
-  \end{figure}
-
-  \begin{alertblock}{Nota}
-    Estas redes son solo \emph{feedforward} (e.g. hacia adelante). Solo se basan en entradas pasadas.
-  \end{alertblock}
-\end{frame}
-
-\begin{frame}{Redes \textsc{Bidirectional Long Short Term Memory (Bi-LSTM)}}
-  \begin{figure}[H]
-    \centering
-    % \missingfigure{Hacer la arquitectura en yEd}
-    \includegraphics[width=0.6\textwidth]{Images/bilstm-arch.pdf}
-    \caption[Etiquetado con una \textsc{Bi-LSTM}]{Etiquetado con una \textsc{Bi-LSTM}. Tomado de \cite{Huang2015}.}
-    \label{fig:bilstm-arch}
-  \end{figure}
-
-  \begin{alertblock}{Nota}
-    Estas redes son \emph{feedforward} como \emph{backward}. Se basan de entradas pasadas y futuras.
-  \end{alertblock}
-\end{frame}
-
-
-% \begin{frame}{Entrenamiento y uso de redes \textsc{Bi-LSTM}}
-%   Se procede primeramente por entrenar el modelo con un dataset, que establece la relación $(t, e)$ de las palabras $t$ y las \emph{Entities} $e$.
-
-%   Las librerías en uso son \textsc{TensorFlow} y \textsc{Numpy}.
+% \subsection{Notation}
+% \begin{frame}{Notation}
+%   \begin{center}
+%     \begin{tabular}{rl}
+%       \textbf{Symbol} & \textbf{Description} \\
+%       $S$ & Service \\
+%       $n$ & Number of services \\
+%       $K_S$ & Service $S$ public key \\
+%       $k_S$ & Service $S$ private key \\
+%       $(n, f)$ & Threshold cryptography scheme \\
+%       $m$ & Plaintext message \\
+%       $\rho$ & Blinding factor \\
+%     \end{tabular}
+%   \end{center}
 % \end{frame}
 
-\subsection{\textsc{Modelo 3:} Búsqueda de tweets relacionados con \emph{embeddings}}
-
-\begin{frame}{?`Que son los \emph{embeddings}?}
-  Son espacios de vectores $n$--dimensionales que se mapean según una palabra.
-
-  Tómese $\vp_{t}$ como el vector que representa el termino $t$ y a $d$ como la distancia calculada entre los vectores (típicamente la distancia \textbf{coseno}).
-
-  \begin{alertblock}{Ejemplo}
-    $d(\vp_{\text{asombroso}}, \vp_{\text{genial}})$ debería tener un valor bajo.
-    
-    $d(\vp_{\text{asombroso}}, \vp_{\text{terrible}})$ debería tener un valor alto.
-  \end{alertblock}
-
-  También se pueden representar varias palabras de un documento en un solo vector por medio de sumarlos. (i.e. $\sum_{t \in d}\vp_{t}$).
-\end{frame}
-
-\begin{frame}{\textsc{Modelo 3:} Búsqueda de tweets relacionados con \emph{embeddings}}
-  Es posible categorizar los $k$ textos mas parecidos a una consulta $q$ en base a su embedding con otros textos recopilados.
-
-  \begin{alertblock}{StarSpace}
-    Genera embeddings en base a un dataset de entrenamiento. Desarrollado por Facebook Research en 2017 \cite{starspace}. 
-  \end{alertblock}
-\end{frame}
-
-\section{Conclusiones y trabajo futuro}
-
-\begin{frame}{Conclusiones}
-  \begin{itemize}
-  \item Se investigaron diferentes metodologías de NLP y Data Science para la tarea de perfilado de cibercriminales por medio de informacion de fuentes abiertas.
-  \item Es necesario probar las metodologías propuestas con información obtenida de fuentes abiertas que este validada de forma que el entrenamiento de ellos sean efectivos en la tarea.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Trabajo futuro}
-  \begin{itemize}
-  \item Implementación de los modelos 2 y 3 propuestos con propósito de ayudar al perfilamiento de cibercriminales.
-  \item Recopilar datos pertinentes para el entrenamiento de los modelos propuestos.
-  \item Adaptar y generalizar los modelos para el uso del lenguaje español.
-  \item Implementar un modelo de recolección de información de redes sociales de cibercriminales de forma que sea mas fácil perfilarlos contra futuros.
-  \item Realizar una visualización en dashboard de los algoritmos propuestos para ayudar al agente a realizar el perfilamiento.
-  \end{itemize}
-\end{frame}
 
 \appendix
-\setbeamertemplate{bibliography item}{\insertbiblabel}
-\begin{frame}[allowframebreaks]{Bibliografía}
+% \setbeamertemplate{bibliography item}{\insertbiblabel}
+% \begin{frame}[allowframebreaks]{Bibliografía}
 
-  % \nocite{*}
-  \bibliography{demo}
-  \bibliographystyle{abbrv}
+%   % \nocite{*}
+%   \bibliography{demo}
+%   \bibliographystyle{abbrv}
 
-\end{frame}
+% \end{frame}
 
 \end{document}
